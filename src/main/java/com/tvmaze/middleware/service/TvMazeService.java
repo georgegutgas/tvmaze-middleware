@@ -1,6 +1,8 @@
 package com.tvmaze.middleware.service;
 
 import com.tvmaze.middleware.dto.SearchShowDto;
+import com.tvmaze.middleware.entity.ValidateShow;
+import com.tvmaze.middleware.repository.ShowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -8,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TvMazeService {
@@ -15,6 +18,12 @@ public class TvMazeService {
 
     @Autowired
     private RestTemplate restTemplate;
+    private final ShowRepository showRepository;
+
+    public TvMazeService(RestTemplate restTemplate, ShowRepository showRepository) {
+        this.restTemplate = restTemplate;
+        this.showRepository = showRepository;
+    }
 
     public List<SearchShowDto> searchShows(String query) {
         String url = API_URL + "/search/shows?q=" + query;
@@ -66,5 +75,23 @@ public class TvMazeService {
         String url = API_URL + "/shows/"+ showId;
 
         return restTemplate.getForObject(url, Map.class);
+    }
+
+    // Valida que el show este guardado en Mongo para retornarlo o consumirlo directamente de tvmaze
+    public Map<String, Object> getShowByIdCache(Long showId) {
+        Optional<ValidateShow> cachedShow = showRepository.findById(showId);
+
+        if (cachedShow.isPresent()) {
+            return cachedShow.get().getData();
+        }
+
+        String url = API_URL + "/shows/" + showId;
+        Map<String, Object> showData = restTemplate.getForObject(url, Map.class);
+
+        if (showData != null) {
+            showRepository.save(new ValidateShow(showId, showData));
+        }
+
+        return showData;
     }
 }

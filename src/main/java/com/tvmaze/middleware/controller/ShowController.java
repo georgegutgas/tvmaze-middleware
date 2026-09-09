@@ -25,6 +25,6 @@ public class ShowController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getShowById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(tvMazeService.getShowById(id));
+        return ResponseEntity.ok(tvMazeService.getShowByIdCache(id));
     }
 }
