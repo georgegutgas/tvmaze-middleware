@@ -1,12 +1,15 @@
 package com.tvmaze.middleware.controller;
 
+import com.tvmaze.middleware.dto.CommentRequest;
 import com.tvmaze.middleware.dto.SearchShowDto;
 import com.tvmaze.middleware.service.TvMazeService;
+import com.tvmaze.middleware.service.CommentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/shows")
