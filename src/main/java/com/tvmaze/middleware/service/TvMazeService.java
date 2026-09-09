@@ -45,7 +45,7 @@ public class TvMazeService {
         }
         return resultList;
     }
-
+    // Obtener el channel porque no se optiene directamente
     private String ChannelName(Map<String, Object> showMap) {
 
         Map<String, Object> network = (Map<String, Object>) showMap.get("network");
@@ -59,5 +59,12 @@ public class TvMazeService {
         }
 
         return null;
+    }
+
+    // Muestra info de un show por su ID
+    public Map<String, Object> getShowById(Long showId) {
+        String url = API_URL + "/shows/"+ showId;
+
+        return restTemplate.getForObject(url, Map.class);
     }
 }
