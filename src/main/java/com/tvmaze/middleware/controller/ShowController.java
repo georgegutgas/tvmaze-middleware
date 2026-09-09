@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/shows")
@@ -23,8 +24,8 @@ public class ShowController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getShowById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(tvMazeService.getShowByIdCache(id));
+    public ResponseEntity<Map<String, Object>> getShowById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(tvMazeService.getShowByIdComplete(id));
     }
 
 

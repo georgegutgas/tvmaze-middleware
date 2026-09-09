@@ -149,4 +149,34 @@ public class TvMazeService {
         return result;
     }
 
+    public Map<String, Object> getShowByIdComplete(Long showId) {
+        Optional<ValidateShow> cachedShow = showRepository.findById(showId);
+        Map<String, Object> showData;
+
+        if (cachedShow.isPresent()) {
+            showData = new HashMap<>(cachedShow.get().getData());
+        } else {
+            String url = API_URL + "/shows/" + showId;
+            showData = restTemplate.getForObject(url, Map.class);
+            if (showData != null) {
+                showRepository.save(new ValidateShow(showId, showData));
+                showData = new HashMap<>(showData);
+            }
+        }
+
+        if (showData != null) {
+            List<CommentEntity> commentsFromDb = commentRepository.findByShowId(showId);
+            List<CommentResponse> commentsDto = commentsFromDb.stream()
+                    .map(c -> CommentResponse.builder()
+                            .comment(c.getComment())
+                            .rating(c.getRating())
+                            .build())
+                    .collect(Collectors.toList());
+
+            showData.put("comments", commentsDto);
+        }
+
+        return showData;
+    }
+
 }
